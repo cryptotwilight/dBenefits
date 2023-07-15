@@ -18,7 +18,7 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   const deployer = new Deployer(hre, wallet);
 
   // Deploying the ERC20 token
-  const erc20Artifact = await deployer.loadArtifact("MyERC20");
+  const erc20Artifact = await deployer.loadArtifact("PaymentToken");
   const erc20 = await deployer.deploy(erc20Artifact, [
     "MyToken",
     "MyToken",
@@ -27,7 +27,7 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   console.log(`ERC20 address: ${erc20.address}`);
 
   // Deploying the paymaster
-  const paymasterArtifact = await deployer.loadArtifact("MyPaymaster");
+  const paymasterArtifact = await deployer.loadArtifact("BenefitPaymaster");
   const paymaster = await deployer.deploy(paymasterArtifact, [erc20.address]);
   console.log(`Paymaster address: ${paymaster.address}`);
 
