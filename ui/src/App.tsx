@@ -1,17 +1,22 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { useRoutes } from 'react-router-dom';
+import router from 'src/router';
 
-import RtlLayout from "layouts/rtl";
-import AdminLayout from "layouts/admin";
-import AuthLayout from "layouts/auth";
-const App = () => {
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+
+import { CssBaseline } from '@mui/material';
+import ThemeProvider from './theme/ThemeProvider';
+
+function App() {
+  const content = useRoutes(router);
+
   return (
-    <Routes>
-      <Route path="auth/*" element={<AuthLayout />} />
-      <Route path="admin/*" element={<AdminLayout />} />
-      <Route path="rtl/*" element={<RtlLayout />} />
-      <Route path="/" element={<Navigate to="/admin" replace />} />
-    </Routes>
+    <ThemeProvider>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <CssBaseline />
+        {content}
+      </LocalizationProvider>
+    </ThemeProvider>
   );
-};
-
+}
 export default App;
