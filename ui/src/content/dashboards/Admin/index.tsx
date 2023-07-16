@@ -8,6 +8,9 @@ import AccountBalance from './AccountBalance';
 import Wallets from './Wallets';
 import AccountSecurity from './AccountSecurity';
 import WatchList from './WatchList';
+import RecentEntitlementRequests from './RecentEntitlementRequests';
+import RecentGasFreeTransactionAllowanceRequests from './RecentGasFreeTransactionAllowanceRequests';
+
 
 function DashboardAdmin() {
   return (
@@ -27,10 +30,10 @@ function DashboardAdmin() {
           spacing={4}
         >
           <Grid item xs={12}>
-            <AccountBalance />
+            <RecentEntitlementRequests />
           </Grid>
           <Grid item lg={8} xs={12}>
-            <Wallets />
+            <RecentGasFreeTransactionAllowanceRequests />
           </Grid>
           <Grid item lg={4} xs={12}>
             <AccountSecurity />

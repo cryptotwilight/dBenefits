@@ -7,7 +7,7 @@ import Footer from 'src/components/Footer';
 import OutstandingBalance from './OutstandingBalance';
 import Entitlements from './Entitlements';
 import AccountSecurity from './AccountSecurity';
-import WatchList from './WatchList';
+
 
 function DashboardClaim() {
   return (
