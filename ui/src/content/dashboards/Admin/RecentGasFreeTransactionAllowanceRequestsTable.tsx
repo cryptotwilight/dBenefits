@@ -26,51 +26,49 @@ import {
 } from '@mui/material';
 
 import Label from 'src/components/Label';
-import { CryptoOrder, CryptoOrderStatus } from 'src/models/crypto_order';
-import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
+import { GasFreeTransactionAllowanceRequest, GasFreeTransactionAllowanceRequestStatus } from 'src/models/gas_free_transaction_allowance_request';
 import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
 import CancelTwoToneIcon from '@mui/icons-material/CancelTwoTone';
 import BulkActions from './BulkActions';
 
 interface RecentOrdersTableProps {
   className?: string;
-  cryptoOrders: CryptoOrder[];
+  gasFreeTransactionAllowanceRequests: GasFreeTransactionAllowanceRequest[];
 }
 
 interface Filters {
-  status?: CryptoOrderStatus;
+  status?: GasFreeTransactionAllowanceRequestStatus;
 }
 
-const getStatusLabel = (cryptoOrderStatus: CryptoOrderStatus): JSX.Element => {
+const getStatusLabel = (gasFreeTransactionAllowanceRequestStatus: GasFreeTransactionAllowanceRequestStatus): JSX.Element => {
   const map = {
-    failed: {
-      text: 'Failed',
+    refused: {
+      text: 'Refused',
       color: 'error'
     },
-    completed: {
-      text: 'Completed',
+    permitted: {
+      text: 'Permitted',
       color: 'success'
     },
-    pending: {
-      text: 'Pending',
+    outstanding: {
+      text: 'Outstanding',
       color: 'warning'
     }
   };
 
-  const { text, color }: any = map[cryptoOrderStatus];
+  const { text, color }: any = map[gasFreeTransactionAllowanceRequestStatus];
 
   return <Label color={color}>{text}</Label>;
 };
 
 const applyFilters = (
-  cryptoOrders: CryptoOrder[],
+  gasFreeTransactionAllowanceRequests: GasFreeTransactionAllowanceRequest[],
   filters: Filters
-): CryptoOrder[] => {
-  return cryptoOrders.filter((cryptoOrder) => {
+): GasFreeTransactionAllowanceRequest[] => {
+  return gasFreeTransactionAllowanceRequests.filter((gasFreeTransactionAllowanceRequest) => {
     let matches = true;
 
-    if (filters.status && cryptoOrder.status !== filters.status) {
+    if (filters.status && gasFreeTransactionAllowanceRequest.status !== filters.status) {
       matches = false;
     }
 
@@ -79,18 +77,18 @@ const applyFilters = (
 };
 
 const applyPagination = (
-  cryptoOrders: CryptoOrder[],
+  gasFreeTransactionAllowanceRequests: GasFreeTransactionAllowanceRequest[],
   page: number,
   limit: number
-): CryptoOrder[] => {
-  return cryptoOrders.slice(page * limit, page * limit + limit);
+): GasFreeTransactionAllowanceRequest[] => {
+  return gasFreeTransactionAllowanceRequests.slice(page * limit, page * limit + limit);
 };
 
-const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
-  const [selectedCryptoOrders, setSelectedCryptoOrders] = useState<string[]>(
+const RecentGasFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps> = ({gasFreeTransactionAllowanceRequests}) => {
+  const [selectedGasFreeTransactionAllowanceRequests, setSelectedGasFreeTransactionAllowanceRequests] = useState<string[]>(
     []
   );
-  const selectedBulkActions = selectedCryptoOrders.length > 0;
+  const selectedBulkActions = selectedGasFreeTransactionAllowanceRequests.length > 0;
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
   const [filters, setFilters] = useState<Filters>({
@@ -103,16 +101,16 @@ const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps>
       name: 'All'
     },
     {
-      id: 'completed',
-      name: 'Completed'
+      id: 'permitted',
+      name: 'Permitted'
     },
     {
-      id: 'pending',
-      name: 'Pending'
+      id: 'outstanding',
+      name: 'Outstanding'
     },
     {
-      id: 'failed',
-      name: 'Failed'
+      id: 'refused',
+      name: 'Refused'
     }
   ];
 
@@ -129,28 +127,28 @@ const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps>
     }));
   };
 
-  const handleSelectAllCryptoOrders = (
+  const handleSelectAllGasFreeTransactionAllowanceRequests = (
     event: ChangeEvent<HTMLInputElement>
   ): void => {
-    setSelectedCryptoOrders(
+    setSelectedGasFreeTransactionAllowanceRequests(
       event.target.checked
-        ? cryptoOrders.map((cryptoOrder) => cryptoOrder.id)
+        ? gasFreeTransactionAllowanceRequests.map((gasFreeTransactionAllowanceRequest) => gasFreeTransactionAllowanceRequest.id)
         : []
     );
   };
 
-  const handleSelectOneCryptoOrder = (
+  const handleSelectOneGasFreeTransactionAllowanceRequest = (
     event: ChangeEvent<HTMLInputElement>,
-    cryptoOrderId: string
+    gasFreeTransactionAllowanceRequestId: string
   ): void => {
-    if (!selectedCryptoOrders.includes(cryptoOrderId)) {
-      setSelectedCryptoOrders((prevSelected) => [
+    if (!selectedGasFreeTransactionAllowanceRequests.includes(gasFreeTransactionAllowanceRequestId)) {
+      setSelectedGasFreeTransactionAllowanceRequests((prevSelected) => [
         ...prevSelected,
-        cryptoOrderId
+        gasFreeTransactionAllowanceRequestId
       ]);
     } else {
-      setSelectedCryptoOrders((prevSelected) =>
-        prevSelected.filter((id) => id !== cryptoOrderId)
+      setSelectedGasFreeTransactionAllowanceRequests((prevSelected) =>
+        prevSelected.filter((id) => id !== gasFreeTransactionAllowanceRequestId)
       );
     }
   };
@@ -163,17 +161,17 @@ const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps>
     setLimit(parseInt(event.target.value));
   };
 
-  const filteredCryptoOrders = applyFilters(cryptoOrders, filters);
-  const paginatedCryptoOrders = applyPagination(
-    filteredCryptoOrders,
+  const filteredGasFreeTransactionAllowanceRequests = applyFilters(gasFreeTransactionAllowanceRequests, filters);
+  const paginatedGasFreeTransactionAllowanceRequests = applyPagination(
+    filteredGasFreeTransactionAllowanceRequests,
     page,
     limit
   );
-  const selectedSomeCryptoOrders =
-    selectedCryptoOrders.length > 0 &&
-    selectedCryptoOrders.length < cryptoOrders.length;
-  const selectedAllCryptoOrders =
-    selectedCryptoOrders.length === cryptoOrders.length;
+  const selectedSomeGasFreeTransactionAllowanceRequests =
+    selectedGasFreeTransactionAllowanceRequests.length > 0 &&
+    selectedGasFreeTransactionAllowanceRequests.length < gasFreeTransactionAllowanceRequests.length;
+  const selectedAllGasFreeTransactionAllowanceRequests =
+    selectedGasFreeTransactionAllowanceRequests.length === gasFreeTransactionAllowanceRequests.length;
   const theme = useTheme();
 
   return (
@@ -215,9 +213,9 @@ const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps>
               <TableCell padding="checkbox">
                 <Checkbox
                   color="primary"
-                  checked={selectedAllCryptoOrders}
-                  indeterminate={selectedSomeCryptoOrders}
-                  onChange={handleSelectAllCryptoOrders}
+                  checked={selectedAllGasFreeTransactionAllowanceRequests}
+                  indeterminate={selectedSomeGasFreeTransactionAllowanceRequests}
+                  onChange={handleSelectAllGasFreeTransactionAllowanceRequests}
                 />
               </TableCell>
               <TableCell>User</TableCell>
@@ -228,27 +226,30 @@ const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps>
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedCryptoOrders.map((cryptoOrder) => {
-              const isCryptoOrderSelected = selectedCryptoOrders.includes(
-                cryptoOrder.id
+            {paginatedGasFreeTransactionAllowanceRequests.map((gasFreeTransactionAllowanceRequest) => {
+              const isGasFreeTransactionAllowanceRequestSelected = selectedGasFreeTransactionAllowanceRequests.includes(
+                gasFreeTransactionAllowanceRequest.id
               );
               return (
                 <TableRow
                   hover
-                  key={cryptoOrder.id}
-                  selected={isCryptoOrderSelected}
+                  key={gasFreeTransactionAllowanceRequest.id}
+                  selected={isGasFreeTransactionAllowanceRequestSelected}
                 >
                   <TableCell padding="checkbox">
                     <Checkbox
                       color="primary"
-                      checked={isCryptoOrderSelected}
+                      checked={isGasFreeTransactionAllowanceRequestSelected}
                       onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleSelectOneCryptoOrder(event, cryptoOrder.id)
+                        handleSelectOneGasFreeTransactionAllowanceRequest(event, gasFreeTransactionAllowanceRequest.id)
                       }
-                      value={isCryptoOrderSelected}
+                      value={isGasFreeTransactionAllowanceRequestSelected}
                     />
                   </TableCell>
                   <TableCell>
+                  <Typography variant="body2" color="text.secondary" noWrap>
+                      {gasFreeTransactionAllowanceRequest.username}
+                    </Typography>
                     <Typography
                       variant="body1"
                       fontWeight="bold"
@@ -256,11 +257,15 @@ const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps>
                       gutterBottom
                       noWrap
                     >
-                      {cryptoOrder.orderDetails}
+                      {gasFreeTransactionAllowanceRequest.user}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {format(cryptoOrder.orderDate, 'MMMM dd yyyy')}
+           
+                  </TableCell>
+                  <TableCell>
+                  <Typography variant="body2" color="text.secondary" noWrap>
+                      {format(gasFreeTransactionAllowanceRequest.requestDate, 'MMMM dd yyyy')}
                     </Typography>
+
                   </TableCell>
                   <TableCell>
                     <Typography
@@ -270,45 +275,14 @@ const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps>
                       gutterBottom
                       noWrap
                     >
-                      {cryptoOrder.orderID}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {cryptoOrder.sourceName}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {cryptoOrder.sourceDesc}
+                      {gasFreeTransactionAllowanceRequest.remainingGasFreeTransactions}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {cryptoOrder.amountCrypto}
-                      {cryptoOrder.cryptoCurrency}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {numeral(cryptoOrder.amount).format(
-                        `${cryptoOrder.currency}0,0.00`
-                      )}
-                    </Typography>
+                    {getStatusLabel(gasFreeTransactionAllowanceRequest.status)}
                   </TableCell>
                   <TableCell align="right">
-                    {getStatusLabel(cryptoOrder.status)}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Tooltip title="Grant Allowance" arrow>
+                    <Tooltip title="Permit Allowance" arrow>
                       <IconButton
                         sx={{
                           '&:hover': {
@@ -322,7 +296,7 @@ const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps>
                         <CheckCircleTwoToneIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Decline Request" arrow>
+                    <Tooltip title="Refuse Request" arrow>
                       <IconButton
                         sx={{
                           '&:hover': { background: theme.colors.error.lighter },
@@ -344,7 +318,7 @@ const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps>
       <Box p={2}>
         <TablePagination
           component="div"
-          count={filteredCryptoOrders.length}
+          count={filteredGasFreeTransactionAllowanceRequests.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}
@@ -352,16 +326,16 @@ const RecentGassFreeTransactionAllowanceRequestTable: FC<RecentOrdersTableProps>
           rowsPerPageOptions={[5, 10, 25, 30]}
         />
       </Box>
-    </Card>
+    </Card>           
   );
 };
 
-RecentGassFreeTransactionAllowanceRequestTable.propTypes = {
-  cryptoOrders: PropTypes.array.isRequired
+RecentGasFreeTransactionAllowanceRequestTable.propTypes = {
+  gasFreeTransactionAllowanceRequests: PropTypes.array.isRequired
 };
 
-RecentGassFreeTransactionAllowanceRequestTable.defaultProps = {
-  cryptoOrders: []
+RecentGasFreeTransactionAllowanceRequestTable.defaultProps = {
+  gasFreeTransactionAllowanceRequests: []
 };
 
-export default RecentGassFreeTransactionAllowanceRequestTable;
+export default RecentGasFreeTransactionAllowanceRequestTable;

@@ -207,7 +207,17 @@ function SidebarMenu() {
         >
           <SubMenuWrapper>
             <List component="div">
-
+              <ListItem component="div">
+                <Button
+                  disableRipple
+                  component={RouterLink}
+                  onClick={closeSidebar}
+                  to="/dashboards/admin"
+                  startIcon={<BrightnessLowTwoToneIcon />}
+                >
+                  Admin
+                </Button>
+              </ListItem>
               <ListItem component="div">
                 <Button
                   disableRipple

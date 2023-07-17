@@ -1,10 +1,12 @@
-export type GasFreeTransactionAllowanceRequestStatus = 'granted' | 'pending' | 'declined';
+import { ShorthandPropertyAssignment } from "typescript";
 
-export interface GassFreeTransactionAllowanceRequest {
+export type GasFreeTransactionAllowanceRequestStatus = 'permitted' | 'outstanding' | 'refused';
+
+export interface GasFreeTransactionAllowanceRequest {
   id: string;
   status: GasFreeTransactionAllowanceRequestStatus;
   user: string;
+  username: string; 
   requestDate: number;
-  requestID: string;
   remainingGasFreeTransactions: string; 
 }
