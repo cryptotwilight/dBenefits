@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import detectEthereumProvider from '@metamask/detect-provider';
 
 import { NavLink } from 'react-router-dom';
 
@@ -22,6 +23,9 @@ import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
 import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
 import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
+
+const provider = await detectEthereumProvider();
+
 
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
