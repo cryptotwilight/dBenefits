@@ -5,21 +5,24 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+
 import "../interfaces/IBenefitEntitlementNFT.sol";
 import "../interfaces/IRegister.sol";
 import "../interfaces/IVersioned.sol";
+import "../interfaces/INotifiable.sol";
 
-contract BenefitEntitlementNFT is ERC721, IBenefitEntitlementNFT, IVersioned {
+contract BenefitEntitlementNFT is ERC721, IBenefitEntitlementNFT, IVersioned, INotifiable {
 
     using Counters for Counters.Counter;
     using Strings for uint256;
     Counters.Counter private _tokenIdCounter;
 
     string constant nme = "BENEFIT_ENTITLEMENT_NFT";
-    uint256 constant version = 2; 
+    uint256 constant version = 3; 
 
 
     string constant ADMINISTRATOR = "ADMINISTRATOR";
+    string constant REGISTER = "REGISTER";
 
 
     IRegister register; 
@@ -30,11 +33,16 @@ contract BenefitEntitlementNFT is ERC721, IBenefitEntitlementNFT, IVersioned {
         register = IRegister(_register);
     }
 
-    function getName() view external returns (string memory _name) {
-        return name; 
+    function notifyChangeOfAddress() external returns (bool _notified) {
+        register = IRegister(register.getAddress(REGISTER));
+        return true; 
     }
 
-    function getVersion() view external returns (uint256 _version) {
+    function getName() pure external returns (string memory _name) {
+        return nme; 
+    }
+
+    function getVersion() pure external returns (uint256 _version) {
         return version; 
     }
 

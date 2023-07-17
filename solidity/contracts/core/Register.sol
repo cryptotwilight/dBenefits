@@ -9,20 +9,21 @@ contract Register is IRegister, IVersioned {
 
     address administrator; 
     string constant name = "REGISTER"; 
-    uint256 constant version = 1; 
+    uint256 constant version = 2; 
 
     mapping(string=>address) addressByName; 
     mapping(address=>string) nameByAddress; 
+    mapping(address=>uint256) versionByAddress; 
 
     constructor(address _admin) {
         administrator = _admin; 
     }
 
-    function getName() view external returns (string memory _name){
+    function getName() pure external returns (string memory _name){
         return name; 
     }
 
-    function getVersion() view external returns (uint256 _version){
+    function getVersion() pure external returns (uint256 _version){
         return version; 
     }
 
@@ -34,11 +35,19 @@ contract Register is IRegister, IVersioned {
         return nameByAddress[_address];
     }
 
-    function add(string memory _name, address _address) external returns (bool _added) {
+    function getVersion(address _address) view external returns (uint256 _version){
+        return versionByAddress[_address];
+    }
+
+    function addVersionedAddress(address _address) external returns (bool _added) {
         doSecurity(); 
-        nameByAddress[_address] = _name; 
-        addressByName[_name] = _address; 
-        return true; 
+        IVersioned v_ = IVersioned(_address);
+        return addAddress(v_.getName(), _address, v_.getVersion());
+    }
+
+    function add(string memory _name, address _address, uint256 _version) external returns (bool _added) {
+        doSecurity(); 
+        return addAddress(_name, _address, _version); 
     }
 
     function remove(string memory _name) external returns (bool _removed) {
@@ -53,6 +62,13 @@ contract Register is IRegister, IVersioned {
 
     function doSecurity() view internal returns (bool) {
         require(msg.sender == administrator, "admin only");
+    }
+
+    function addAddress(string memory _name, address _address, uint256 _version) internal returns (bool _added){
+        nameByAddress[_address] = _name; 
+        addressByName[_name] = _address; 
+        versionByAddress[_address] = _version; 
+        return true; 
     }
 
 
