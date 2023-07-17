@@ -8,10 +8,10 @@ The model is described in the diagram below:
 
 In this model the Beneficiary is enabled to request an allowance of transactions that are gas free to help them claim their benefit entitlements when they are available avoiding the rigmarole of acquiring gas. 
 This is supported by the on chain transaction model described below:
-
+![dBenefits Transaction Model](https://github.com/cryptotwilight/dBenefits/blob/main/media/dbenefits%20diagrams-Model.drawio.png?raw=true)
 
 The deployed contracts model the scenario described in the demo scenario below: 
-
+![dBenefits Contracts Model](https://github.com/cryptotwilight/dBenefits/blob/main/media/dbenefits%20diagrams-Demo.drawio%20(1).png?raw=true)
 
 # Deployment Addresses 
 The deployment addresses for dBenefits on the Zksync testnet are described below: 
@@ -24,3 +24,7 @@ The deployment addresses for dBenefits on the Zksync testnet are described below
 |PAYMENT TOKEN  | 0xBaA3A0F67C8c5eAD6662585F63cA1b1E1d67CFa0 |2| This is the token that is used for payouts on the dBenefits platform .|
 
 The dBenefits contracts are designed to auto configure on deployment using the Register Contract. This helps to ensure that version management is consistent and transparent. It also allows for modular development.
+
+# DEMO UI 
+The demo ui for the dBenefits platform is described at the link below: 
+https://dbenefits.on.fleek.co/
