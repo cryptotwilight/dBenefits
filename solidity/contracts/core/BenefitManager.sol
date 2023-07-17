@@ -11,7 +11,7 @@ import "../interfaces/INotifiable.sol";
 contract BenefitManager is IBenefitManagerAdmin, IVersioned, INotifiable {
 
     string constant name = "BENEFIT_MANAGER";
-    uint256 constant version = 5; 
+    uint256 constant version = 6; 
 
     string constant REGISTER        = "REGISTER";
 
@@ -33,13 +33,20 @@ contract BenefitManager is IBenefitManagerAdmin, IVersioned, INotifiable {
 
     mapping(address=>bool) knownBeneficiary; 
     mapping(address=>uint256) remainingGasFreeTransactionsByBeneficiary; 
+
+    uint256 [] gasFreeTransactionAllowanceRequestIds; 
+    mapping(address=>uint256) gasFreeTransactionAllowanceRequestIdByBeneficiary; 
+    mapping(uint256=>GasFreeTransactionAllowanceRequest) gasFreeTransactionAllowanceRequestById; 
+
     mapping(uint256=>BenefitEntitlement) benefitEntitlementById; 
     mapping(address=>uint256[]) benefitEntitlementsByBeneficiaryAddress; 
     mapping(address=>mapping(uint256=>bool)) isEntitlementByBeneficiaryAddress; 
 
-    uint256 benefitEntitlementRequestIds; 
+    uint256 [] benefitEntitlementRequestIds; 
     mapping(uint256=>BenefitEntitlementRequest) benefitEntitlementRequestById;
     mapping(uint256=>bool) isApprovedEntitlementRequestById; 
+
+    mapping(uint256=>string) declinedEntitlementRequestReasonByEntitlementRequestId; 
 
 
     constructor(address _register)  { 
@@ -84,7 +91,7 @@ contract BenefitManager is IBenefitManagerAdmin, IVersioned, INotifiable {
                                                                                     user : msg.sender, 
                                                                                     username  : _username, 
                                                                                     requestDate : block.timestamp,
-                                                                                    benefitType : benefitType
+                                                                                    benefitType : _benefitType
                                                                                });
         _requestId = request_.id; 
         benefitEntitlementRequestById[_requestId] = request_;    
@@ -92,25 +99,38 @@ contract BenefitManager is IBenefitManagerAdmin, IVersioned, INotifiable {
         return _requestId; 
     }
     function getGasFreeTransactionAllowance(address _beneficiary) view external returns (uint256 _remainingAllowedTransactions){
-
+        return remainingGasFreeTransactionsByBeneficiary[_beneficiary];
     }
 
     function getGasFreeTransactionAllowanceRequests() view external returns (GasFreeTransactionAllowanceRequest [] memory _gasFreeTransactionAllowanceRequests){
-
+        _gasFreeTransactionAllowanceRequests = new GasFreeTransactionAllowanceRequest[](gasFreeTransactionAllowanceRequestIds.length);
+        for(uint256 x = 0; x < _gasFreeTransactionAllowanceRequests.length; x++) {
+            _gasFreeTransactionAllowanceRequests[x] = gasFreeTransactionAllowanceRequestById[gasFreeTransactionAllowanceRequestIds[x]];
+        }
+        return _gasFreeTransactionAllowanceRequests;
     }
 
-    function actionGasFreeTransactionAllowance(uint256 allowanceRequestId, bool _permitted) external returns (bool _actioned){
-
+    function actionGasFreeTransactionAllowance(uint256 _allowanceRequestId, bool _permitted) external returns (bool _actioned){
+        if(_permitted) {
+            remainingGasFreeTransactionsByBeneficiary[gasFreeTransactionAllowanceRequestById[_allowanceRequestId].user] = defaultGasFreeTransactionAllowance;
+            return true; 
+        }
+        return false; 
     }
 
 
-    function getEntitlementRequests() view external returns (BenefitEntitlementRequest [] memory _entitlementRequests){
-
+    function getEntitlementRequests() view external returns (BenefitEntitlementRequest [] memory _entitlementRequests)   {
+        _entitlementRequests = new BenefitEntitlementRequest[](benefitEntitlementRequestIds.length);
+        for(uint256 x = 0; x < _entitlementRequests.length; x++) {
+            _entitlementRequests[x] = benefitEntitlementRequestById[benefitEntitlementRequestIds[x]];
+        }
+        return _entitlementRequests;
     }
     
 
-    function declineEntitlementRequest(uint256 entitlementRequestId, string memory reason) external returns (bool _declined){
-
+    function declineEntitlementRequest(uint256 _entitlementRequestId, string memory _reason) external returns (bool _declined){
+        declinedEntitlementRequestReasonByEntitlementRequestId[_entitlementRequestId] = _reason;
+        return true; 
     }
 
     function getEntitlements() view external returns (BenefitEntitlement [] memory _benefitEntitlements){
@@ -139,11 +159,17 @@ contract BenefitManager is IBenefitManagerAdmin, IVersioned, INotifiable {
         return _payout;
     }
 
-    function requestGasFreeTransactionAllowance() external returns (bool _approved){
-        require(remainingGasFreeTransactionsByBeneficiary[msg.sender] == 0, "allowance already available");
-        remainingGasFreeTransactionsByBeneficiary[msg.sender] = defaultGasFreeTransactionAllowance;
-        _approved = true; 
-        return _approved; 
+    function requestGasFreeTransactionAllowance() external returns (bool _noted){
+        require(remainingGasFreeTransactionsByBeneficiary[msg.sender] == 1, "allowance already available");
+        GasFreeTransactionAllowanceRequest memory request_ = GasFreeTransactionAllowanceRequest({
+            id : getIndex(),
+            status  : GasFreeTransactionAllowanceReqeustStatus.OUTSTANDING, 
+            user : msg.sender, 
+            username : usernameByUser[msg.sender],
+            requestDate : block.timestamp, 
+            remainingGasFreeTransactions : remainingGasFreeTransactionsByBeneficiary[msg.sender];
+        });
+        return true; 
     }
 
     function issueEntitlement(BenefitEntitlement memory _benefitEntitlement) external returns (bool issued) {
@@ -170,5 +196,10 @@ contract BenefitManager is IBenefitManagerAdmin, IVersioned, INotifiable {
 
     function doSecurity() view internal returns (bool) {
         require(msg.sender == register.getAddress(ADMINISTRATOR), "admin only");
+    }
+
+    function getIndex() internal returns (uint256 _index) {
+        _index = index++; 
+        return _index; 
     }
 }
